@@ -14,7 +14,27 @@ We want to extract the following information from the website:
 Below is a list of already discovered internal links from the website.
 
 Your task:
-Select ONLY the links that are MOST useful for extracting the fields above.
+Select ALL internal links that could help extract ANY investor-related information.
+
+Even moderately useful pages should be included.
+
+Examples of useful pages include:
+- about
+- team
+- people
+- portfolio
+- companies
+- investment approach
+- thesis
+- sectors
+- founder resources
+- apply
+- FAQ
+- contact
+- news
+- blog
+- partners
+- careers (sometimes contains culture/thesis)
 
 Prioritize links related to:
 - portfolio companies
@@ -26,6 +46,14 @@ Prioritize links related to:
 - contact information
 - pitch submission
 - firm overview
+
+Also include supporting pages such as:
+- about pages
+- team pages
+- founder pages
+- investment approach pages
+- FAQ pages
+- application pages
 
 Ignore:
 - legal pages

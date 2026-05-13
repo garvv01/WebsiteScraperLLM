@@ -49,6 +49,8 @@ def discover_urls(start_url, app, client):
                     if not any(pattern in normalized_link for pattern in EXCLUDED_PATTERNS):
                         filtered_links.append(link)
 
+                filtered_links = sorted(set(filtered_links))
+
                 links_text = "\n".join(filtered_links[:50])
 
                 llm_response = client.chat.completions.create(
