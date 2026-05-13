@@ -1,16 +1,13 @@
 import time
-
 from urllib.parse import urlparse, urljoin
-
 from config.settings import (
-    IMPORTANT_LINK_KEYWORDS,
     EXCLUDED_PATTERNS,
     MAX_DEPTH,
     RATE_LIMIT,
     MODEL_NAME
 )
-
 from utils.helpers import normalize_url
+from crawler.prompts import build_discovery_prompt
 
 def discover_urls(start_url, app, client):
 
@@ -49,33 +46,17 @@ def discover_urls(start_url, app, client):
 
                     normalized_link = link.lower()
 
-                    if any(word in normalized_link for word in IMPORTANT_LINK_KEYWORDS) and not any(pattern in normalized_link for pattern in EXCLUDED_PATTERNS):
+                    if not any(pattern in normalized_link for pattern in EXCLUDED_PATTERNS):
                         filtered_links.append(link)
 
-                links_text = "\n".join(filtered_links[:20])
+                links_text = "\n".join(filtered_links[:50])
 
                 llm_response = client.chat.completions.create(
                     model=MODEL_NAME,
                     messages=[
                         {
-                            "role": "system",
-                            "content": """
-                        You are a website crawling assistant.
-
-                        Return ONLY important internal URLs.
-
-                        Rules:
-                        - Return one URL per line
-                        - No explanations
-                        - No markdown
-                        - No numbering
-                        - No extra text
-                        - If no useful links exist, return NOTHING
-                        """
-                        },
-                        {
                             "role": "user",
-                            "content": links_text
+                            "content": build_discovery_prompt(links_text)
                         }
                     ]
                 )

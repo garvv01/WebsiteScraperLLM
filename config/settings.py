@@ -1,22 +1,3 @@
-IMPORTANT_LINK_KEYWORDS = [
-    "about",
-    "team",
-    "people",
-    "portfolio",
-    "companies",
-    "investments",
-    "thesis",
-    "focus",
-    "contact",
-    "faq",
-    "apply",
-    "pitch",
-    "founder",
-    "partners",
-    "news",
-    "blog"
-]
-
 EXCLUDED_PATTERNS = [
     "#",
     "page=",
