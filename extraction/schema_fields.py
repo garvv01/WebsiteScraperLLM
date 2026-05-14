@@ -3,7 +3,6 @@ TARGET_FIELDS = [
     "type",
     "title",
     "firm_name",
-    "ticket_size",
     "min_investment_amount",
     "max_investment_amount",
     "total_company_invested",
