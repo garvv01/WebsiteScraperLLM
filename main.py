@@ -7,6 +7,9 @@ from utils.cleaners import clean_content
 from utils.classifiers import get_page_type
 from utils.helpers import normalize_url
 from crawler.discover import discover_urls
+from extraction.extractor import extract_page_data
+from extraction.merger import merge_results
+from utils.savers import save_json
 
 load_dotenv()
 
@@ -20,6 +23,8 @@ client = OpenAI(api_key=openai_api_key)
 url = normalize_url("https://pointone.capital")
 
 all_pages = []
+
+partial_results = []
 
 discovered_urls = discover_urls(url, app, client)
 
@@ -63,3 +68,26 @@ print("\nSCRAPED PAGES:\n")
 
 for page in all_pages:
     print(page["url"])
+
+print("\nSTARTING EXTRACTION...\n")
+
+for page in all_pages:
+
+    print("EXTRACTING:", page["url"])
+
+    extracted_data = extract_page_data(page, client)
+
+    partial_results.append(extracted_data)
+
+print("\nPARTIAL RESULTS:\n")
+
+for result in partial_results:
+    print(result)
+
+final_json = merge_results(partial_results)
+
+print("\nFINAL JSON:\n")
+
+print(final_json)
+
+save_json(final_json, "output/final.json")
