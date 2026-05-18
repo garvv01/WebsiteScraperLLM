@@ -31,6 +31,10 @@ def extract_page_data(page, client):
         return json.loads(content)
     
     except Exception:
+
+        print("\nINVALID JSON RESPONSE:\n")
+        print(content)
+        
         return {
             "error": "invalid_json",
             "raw_response": content

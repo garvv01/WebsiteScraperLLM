@@ -9,5 +9,16 @@ EXCLUDED_PATTERNS = [
 ]
 
 MAX_DEPTH = 3
-RATE_LIMIT = 10
-MODEL_NAME = "gpt-4.1-mini"
+
+MODEL_NAME = "gpt-5.4"
+
+HOMEPAGE_PRIORITY_FIELDS = {
+    "name",
+    "title",
+    "about_us",
+    "investment_thesis",
+    "website",
+    "ticket_size",
+    "min_investment_amount",
+    "max_investment_amount",
+}

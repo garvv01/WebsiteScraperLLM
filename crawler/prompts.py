@@ -1,74 +1,46 @@
 from extraction.schema_fields import TARGET_FIELDS
 
-def build_discovery_prompt(links_text):
 
+def build_discovery_prompt(links_text):
     fields_text = "\n".join([f"- {field}" for field in TARGET_FIELDS])
 
     return f"""
 You are helping build a structured database of investment firms.
-
 We want to extract the following information from the website:
-
 {fields_text}
 
-Below is a list of already discovered internal links from the website.
+Below is a list of internal links from the website, already sorted by likely relevance.
+Your task: select the links most likely to contain the target information.
 
-Your task:
-Select ALL internal links that could help extract ANY investor-related information.
+HIGH PRIORITY — always include if present:
+- apply / application / pitch / submit
+- isafe / safe / safe-note / how-we-invest
+- about / about-us / who-we-are
+- investment-thesis / thesis / approach / criteria / focus
+- faq / frequently-asked-questions
+- portfolio / companies / investments
+- team / people / partners
 
-Even moderately useful pages should be included.
+MEDIUM PRIORITY — include if the high priority pages are sparse:
+- contact / contact-us
+- sectors / industries
+- founder-resources / founders-hub
+- news / blog / insights (only the index page, not individual articles)
+- careers (sometimes contains culture or thesis)
 
-Examples of useful pages include:
-- about
-- team
-- people
-- portfolio
-- companies
-- investment approach
-- thesis
-- sectors
-- founder resources
-- apply
-- FAQ
-- contact
-- news
-- blog
-- partners
-- careers (sometimes contains culture/thesis)
-
-Prioritize links related to:
-- portfolio companies
-- investment thesis
-- sectors
-- stages
-- founder applications
-- team members
-- contact information
-- pitch submission
-- firm overview
-
-Also include supporting pages such as:
-- about pages
-- team pages
-- founder pages
-- investment approach pages
-- FAQ pages
-- application pages
-
-Ignore:
-- legal pages
-- privacy pages
-- terms pages
-- login/signup pages
-- pagination links
-- social share links
+SKIP entirely:
+- individual blog posts or news articles
+- legal / privacy / terms / cookie pages
+- login / signup / auth pages
+- pagination links (?page=, /page/)
+- social media share links
+- anchor-only links (#section)
 
 Rules:
-- Return ONLY URLs
-- One URL per line
-- No explanations
-- No markdown
-- No numbering
+- Return ONLY URLs, one per line
+- No explanations, no markdown, no numbering
+- Prefer pages that are likely to mention: ticket size, cheque size, investment amount,
+  stage focus, sector focus, geographic focus, or founder application process
 
 Links:
 {links_text}

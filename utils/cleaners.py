@@ -1,6 +1,21 @@
+import re
+
 def clean_content(content):
     
+    content = re.sub(r'!\[.*?\]\(.*?\)', '', content)
+
     lines = content.splitlines()
+
+    lines = [
+        line for line in lines
+        if not (
+            "google.com/maps" in line
+            or "_next/image" in line
+            or "recaptcha" in line.lower()
+            or "gstatic" in line
+            or "token=" in line
+        )
+    ]
 
     cleaned_lines = []
 
@@ -9,9 +24,6 @@ def clean_content(content):
         line = line.strip()
 
         if not line:
-            continue
-
-        if len(line) < 3:
             continue
 
         cleaned_lines.append(line)
