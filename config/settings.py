@@ -5,7 +5,9 @@ EXCLUDED_PATTERNS = [
     "terms",
     "cookie",
     "login",
-    "signup"
+    "signup",
+    "/people/",         # skip individual team profile pages e.g. /people/shailendra-singh
+    "/investment-thesis/",  # skip individual portfolio thesis pages
 ]
 
 MAX_DEPTH = 3

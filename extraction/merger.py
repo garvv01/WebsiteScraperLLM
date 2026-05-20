@@ -5,7 +5,6 @@ from extraction.schema_fields import TARGET_FIELDS
 def merge_results(partial_results):
     final_json = {field: None for field in TARGET_FIELDS}
 
-    # Separate homepage result from the rest
     homepage_result = None
     other_results = []
 
@@ -17,7 +16,6 @@ def merge_results(partial_results):
         else:
             other_results.append(result)
 
-    # Process homepage first so it wins on priority fields
     ordered_results = ([homepage_result] if homepage_result else []) + other_results
 
     for result in ordered_results:
@@ -30,7 +28,6 @@ def merge_results(partial_results):
             if value is None:
                 continue
 
-            # Homepage-only fields: never overwrite with data from other pages
             if field in HOMEPAGE_PRIORITY_FIELDS and final_json[field] is not None:
                 continue
 
@@ -40,29 +37,23 @@ def merge_results(partial_results):
                 existing = final_json[field]
                 if not isinstance(existing, list):
                     existing = [existing]
-                # Deduplicate case-insensitively for strings
                 existing_lower = {v.lower() for v in existing if isinstance(v, str)}
                 new_vals = [v for v in value if not (isinstance(v, str) and v.lower() in existing_lower)]
                 final_json[field] = existing + new_vals
 
-    # Clean up empty lists
     for field, value in final_json.items():
         if isinstance(value, list) and len(value) == 0:
             final_json[field] = None
 
-    # Derive total_company_invested from portfolio list
-    # LLM counting links is unreliable; always use the merged list length
     if final_json.get("portfolio_companies"):
         final_json["total_company_invested"] = len(final_json["portfolio_companies"])
     else:
         final_json["total_company_invested"] = None
 
-    # Ensure ticket_size / min / max are internally consistent
     min_val = final_json.get("min_investment_amount")
     max_val = final_json.get("max_investment_amount")
     ticket = final_json.get("ticket_size")
 
-    # If LLM set min/max but left ticket_size null, reconstruct it
     if ticket is None and (min_val is not None or max_val is not None):
         if min_val is not None and max_val is not None:
             final_json["ticket_size"] = f"${_format_amount(min_val)} - ${_format_amount(max_val)}"
@@ -71,7 +62,6 @@ def merge_results(partial_results):
         elif max_val is not None:
             final_json["ticket_size"] = f"Up to ${_format_amount(max_val)}"
 
-    # Normalize URLs: ensure pitch_url and contact_link use consistent www
     for url_field in ("pitch_url", "contact_link", "website"):
         val = final_json.get(url_field)
         if val and val.startswith("https://sparrowvc.com"):

@@ -13,18 +13,20 @@ from crawler.prompts import build_discovery_prompt
 PRIORITY_KEYWORDS = [
     "apply", "isafe", "safe", "invest", "thesis", "approach",
     "about", "faq", "how-we", "criteria", "focus", "stage",
-    "sector", "portfolio", "companies", "team", "people",
-    "contact", "founder", "resource", "partner", "process"
+    "sector", "portfolio", "companies", "team", "our-team",
+    "people", "contact", "founder", "resource", "partner", "process"
 ]
 
-# These first path segments are always scraped regardless of what the LLM picks.
+# These pages are always scraped regardless of what the LLM picks.
 # Matched against ONLY the first segment of the URL path to avoid
-# matching deep subpages like /investment-thesis/company-name.
-# e.g. https://www.100x.vc/isafe → first segment = "isafe" → MATCH
+# matching deep subpages like /people/person-name or /investment-thesis/company-name.
+# e.g. https://www.peakxv.com/our-team  → first segment = "our-team" → MATCH
+#      https://www.peakxv.com/people/shailendra-singh → filtered out by EXCLUDED_PATTERNS
 #      https://www.100x.vc/investment-thesis/abc → first segment = "investment-thesis" → NO MATCH
 MUST_SCRAPE_FIRST_SEGMENTS = {
     "apply", "isafe", "safe", "about", "about-us",
-    "faq", "how-we-invest", "criteria", "invest", "approach"
+    "faq", "how-we-invest", "criteria", "invest", "approach",
+    "our-team",
 }
 
 
@@ -110,8 +112,7 @@ def discover_urls(start_url, app, client):
                         queue.append((full_url, depth + 1))
 
                 # Step 5: force-add must-scrape pages the LLM may have missed.
-                # Only matches on the FIRST path segment to avoid deep subpages
-                # like /investment-thesis/company-name being incorrectly included.
+                # Only matches on the FIRST path segment to avoid deep subpages.
                 for link in filtered_links:
                     full_url = normalize_url(urljoin(current_url, link))
                     link_domain = urlparse(full_url).netloc
